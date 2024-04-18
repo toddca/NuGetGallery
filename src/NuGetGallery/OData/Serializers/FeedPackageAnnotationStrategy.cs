@@ -36,12 +36,9 @@ namespace NuGetGallery.OData.Serializers
         {
             var url = new UrlHelper(request);
             var result = url.Route(routePrefix + RouteName.DownloadPackage, new { id, version });
-
-            var builder = new UriBuilder(request.RequestUri);
-            builder.Path = version == null ? EnsureTrailingSlash(result) : result;
-            builder.Query = string.Empty;
-
-            return builder.Uri;
+            var localPath = version == null ? EnsureTrailingSlash(result) : result;
+            
+            return new Uri($"{request.RequestUri.Scheme}://{request.RequestUri.Host}{localPath}");
         }
 
         private static string EnsureTrailingSlash(string url)
