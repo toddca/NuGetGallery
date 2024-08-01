@@ -39,6 +39,7 @@ namespace NuGetGallery.Frameworks
                 .ToList();
 
             Assert.True(fields.Count > 0);
+            Assert.True(fields.Count != 0);
 
             var supportedFrameworks = new HashSet<NuGetFramework>(SupportedFrameworks.AllSupportedNuGetFrameworks);
 
