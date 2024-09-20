@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure;
 using Newtonsoft.Json;
-using NuGetGallery;
 
 namespace NuGet.Services.Metadata.Catalog.Persistence
 {
