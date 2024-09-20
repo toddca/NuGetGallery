@@ -125,21 +125,9 @@ namespace NuGet.Services.Metadata.Catalog.Persistence
             {
                 await OnDeleteAsync(resourceUri, deleteRequestOptions, cancellationToken);
             }
-            catch (RequestFailedException e)
+            catch (RequestFailedException e) when (e.Status == (int)HttpStatusCode.NotFound)
             {
-                WebException webException = e.InnerException as WebException;
-                if (webException != null)
-                {
-                    HttpStatusCode statusCode = ((HttpWebResponse)webException.Response).StatusCode;
-                    if (statusCode != HttpStatusCode.NotFound)
-                    {
-                        throw;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
+                // continue
             }
             catch (Exception e)
             {
