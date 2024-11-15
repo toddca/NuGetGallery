@@ -352,6 +352,7 @@
     <Compile Include="RequestModels\UpdateListedRequest.cs" />
     <Compile Include="Services\ListedVerb.cs" />
     <Compile Include="Services\MissingLicenseValidationMessageV2.cs" />
+    <Compile Include="Services\NormalizedPackageIdInfo.cs" />
     <Compile Include="Services\NullTyposquattingService.cs" />
     <Compile Include="Services\UploadPackageMissingReadme.cs" />
     <Compile Include="Services\MissingLicenseValidationMessage.cs" />
@@ -2240,6 +2241,7 @@
     <PackageReference Include="System.Diagnostics.Debug" />
     <PackageReference Include="System.Linq.Expressions" />
     <PackageReference Include="System.Net.Http" />
+    <PackageReference Include="System.Text.Json" />
     <PackageReference Include="NuGet.StrongName.WebActivator" />
     <PackageReference Include="WebActivatorEx" />
     <PackageReference Include="NuGet.StrongName.WebBackgrounder.EntityFramework" />
