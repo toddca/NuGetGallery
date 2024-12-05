@@ -23,7 +23,7 @@ namespace NuGet.Services.Storage
         private readonly string _path;
 
         public AzureStorage(
-            BlobServiceClient account,
+            BlobServiceClientFactory account,
             string containerName,
             string path,
             Uri baseAddress,
@@ -31,7 +31,7 @@ namespace NuGet.Services.Storage
             bool enablePublicAccess,
             ILogger<AzureStorage> logger)
             : this(
-                  account.GetBlobContainerClient(containerName),
+                  account.GetBlobServiceClient().GetBlobContainerClient(containerName),
                   baseAddress,
                   initializeContainer,
                   enablePublicAccess,
@@ -117,13 +117,7 @@ namespace NuGet.Services.Storage
 
         static Uri GetDirectoryUri(BlobContainerClient directory)
         {
-            Uri uri = new UriBuilder(directory.Uri)
-            {
-                Scheme = "http",
-                Port = 80
-            }.Uri;
-
-            return uri;
+            return directory.Uri;
         }
 
         //Blob exists

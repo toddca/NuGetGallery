@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -9,7 +9,7 @@ namespace NuGet.Services.Storage
 {
     public class AzureStorageFactory : StorageFactory
     {
-        BlobServiceClient _account;
+        BlobServiceClientFactory _account;
         string _containerName;
         private readonly bool _enablePublicAccess;
         string _path;
@@ -26,7 +26,7 @@ namespace NuGet.Services.Storage
         }
 
         public AzureStorageFactory(
-            BlobServiceClient account,
+            BlobServiceClientFactory account,
             string containerName,
             bool enablePublicAccess,
             ILogger<AzureStorage> azureStorageLogger,
@@ -50,13 +50,7 @@ namespace NuGet.Services.Storage
 
             if (baseAddress == null)
             {
-                Uri blobEndpoint = new UriBuilder(account.Uri)
-                {
-                    Scheme = "http", // Convert base address to http. 'https' can be used for communication but is not part of the names.
-                    Port = 80
-                }.Uri;
-
-                BaseAddress = new Uri(blobEndpoint, containerName + "/" + _path ?? string.Empty);
+                BaseAddress = new Uri(account.Uri, containerName + "/" + _path ?? string.Empty);
             }
             else
             {
