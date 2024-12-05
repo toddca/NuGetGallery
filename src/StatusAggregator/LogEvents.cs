@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace StatusAggregator
 {
@@ -7,5 +7,6 @@ namespace StatusAggregator
         public static EventId RegexFailure = new EventId(400, "Failed to parse incident using Regex.");
         public static EventId ManualChangeFailure = new EventId(401, "Failed to apply a manual change.");
         public static EventId IncidentIngestionFailure = new EventId(402, "Failed to update incident API data.");
+        public static EventId IncidentEntityFailure = new EventId(403, "Failed to parse an incident entity.");
     }
 }

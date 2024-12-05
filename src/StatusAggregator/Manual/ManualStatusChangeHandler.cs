@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -33,37 +33,37 @@ namespace StatusAggregator
                 {
                     ManualStatusChangeType.AddStatusEvent,
                     new ManualStatusChangeProcessor<AddStatusEventManualChangeEntity>(
-                        addStatusEventManualChangeHandler ?? throw new ArgumentNullException(nameof(addStatusEventManualChangeHandler)))
+                        addStatusEventManualChangeHandler ?? throw new ArgumentNullException(nameof(addStatusEventManualChangeHandler)), logger)
                 },
 
                 {
                     ManualStatusChangeType.EditStatusEvent,
                     new ManualStatusChangeProcessor<EditStatusEventManualChangeEntity>(
-                        editStatusEventManualChangeHandler ?? throw new ArgumentNullException(nameof(editStatusEventManualChangeHandler)))
+                        editStatusEventManualChangeHandler ?? throw new ArgumentNullException(nameof(editStatusEventManualChangeHandler)), logger)
                 },
 
                 {
                     ManualStatusChangeType.DeleteStatusEvent,
                     new ManualStatusChangeProcessor<DeleteStatusEventManualChangeEntity>(
-                        deleteStatusEventManualChangeHandler ?? throw new ArgumentNullException(nameof(deleteStatusEventManualChangeHandler)))
+                        deleteStatusEventManualChangeHandler ?? throw new ArgumentNullException(nameof(deleteStatusEventManualChangeHandler)), logger)
                 },
 
                 {
                     ManualStatusChangeType.AddStatusMessage,
                     new ManualStatusChangeProcessor<AddStatusMessageManualChangeEntity>(
-                        addStatusMessageManualChangeHandler ?? throw new ArgumentNullException(nameof(addStatusMessageManualChangeHandler)))
+                        addStatusMessageManualChangeHandler ?? throw new ArgumentNullException(nameof(addStatusMessageManualChangeHandler)), logger)
                 },
 
                 {
                     ManualStatusChangeType.EditStatusMessage,
                     new ManualStatusChangeProcessor<EditStatusMessageManualChangeEntity>(
-                        editStatusMessageManualChangeHandler ?? throw new ArgumentNullException(nameof(editStatusMessageManualChangeHandler)))
+                        editStatusMessageManualChangeHandler ?? throw new ArgumentNullException(nameof(editStatusMessageManualChangeHandler)), logger)
                 },
 
                 {
                     ManualStatusChangeType.DeleteStatusMessage,
                     new ManualStatusChangeProcessor<DeleteStatusMessageManualChangeEntity>(
-                        deleteStatusMessageManualChangeHandler ?? throw new ArgumentNullException(nameof(deleteStatusMessageManualChangeHandler)))
+                        deleteStatusMessageManualChangeHandler ?? throw new ArgumentNullException(nameof(deleteStatusMessageManualChangeHandler)), logger)
                 }
             };
         }
@@ -101,15 +101,24 @@ namespace StatusAggregator
             where T : ManualStatusChangeEntity
         {
             private readonly IManualStatusChangeHandler<T> _handler;
+            ILogger<ManualStatusChangeHandler> _logger;
 
-            public ManualStatusChangeProcessor(IManualStatusChangeHandler<T> handler)
+            public ManualStatusChangeProcessor(IManualStatusChangeHandler<T> handler,
+                ILogger<ManualStatusChangeHandler> logger)
             {
                 _handler = handler;
+                _logger = logger;
             }
 
             public async Task GetTask(ITableWrapper table, ManualStatusChangeEntity entity)
             {
                 var typedEntity = await table.RetrieveAsync<T>(entity.RowKey);
+                if (typedEntity is null)
+                {
+                    _logger.LogError(LogEvents.IncidentEntityFailure, $"Manual status change processing failure: RowKey {entity.RowKey}, Timestamp {entity.Timestamp}");
+                    return;
+                }
+
                 await _handler.Handle(typedEntity);
             }
         }
